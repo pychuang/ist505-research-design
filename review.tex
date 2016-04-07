@@ -1,0 +1,91 @@
+% v2-acmsmall-sample.tex, dated March 6 2012
+% This is a sample file for ACM small trim journals
+%
+% Compilation using 'acmsmall.cls' - version 1.3 (March 2012), Aptara Inc.
+% (c) 2010 Association for Computing Machinery (ACM)
+%
+% Questions/Suggestions/Feedback should be addressed to => "acmtexsupport@aptaracorp.com".
+% Users can also go through the FAQs available on the journal's submission webpage.
+%
+% Steps to compile: latex, bibtex, latex latex
+%
+% For tracking purposes => this is v1.3 - March 2012
+
+\documentclass[prodmode]{acmsmall} % Aptara syntax
+
+% Package to generate and customize Algorithm as per ACM style
+\usepackage[ruled]{algorithm2e}
+\renewcommand{\algorithmcfname}{ALGORITHM}
+\SetAlFnt{\small}
+\SetAlCapFnt{\small}
+\SetAlCapNameFnt{\small}
+\SetAlCapHSkip{0pt}
+\IncMargin{-\parindent}
+
+
+% Document starts
+\begin{document}
+
+% Page heads
+\markboth{Po-Yu Chuang et al.}{Metadata Correction of CiteSeerX: Utilizing the Information inside Parent URLs}
+
+% Title portion
+\title{Metadata Correction of CiteSeerX: Utilizing the Information inside Parent URLs}
+\author{
+Po-Yu Chuang
+\affil{College of Information Sciences and Technology, Penn State University}
+}
+
+\begin{abstract}
+Crawler-based digital libraries such as CiteSeerX harvest documents from the Internet and extract metadata, for instance, subject, authors an year., from the documents automatically by elaborately designed algorithms. However, it is inevitable that the metadata extracted by algorithms contain errors. There are several techniques being developed to deal with this problem. One is using the known correct metadata to proofread the metadata in CiteSeerX. The known correct metadata come from the submission based digital libraries such as PubMed, arXive, IEEE Xplore, ACM Digital Library, DBLP... etc. The other approach is using the commercial search engines, such as Google Scholar and Microsoft Academic Search, as sources because their extraction algorithms may be more delicate and precise and the quality of their metadata is often better. The third approach is introducing the human intelligence to cover the weakness of extraction software. Google Scholar, Microsoft Academic Search and CiteSeerX all give their users the power to correct metadata in certain extent.
+
+In addition to the techniques mentioned above, there is one possible source of metadata that has never been utilized by CiteSeerX -- parent URLs. The parent URL of a document is the URL, or more specifically a HTML Web page, that contains the link to the document. Intuitively, the Web pages of parent URLs may contain metadata of the document. Our research questions come from here:  Is parent URL a good source of information for correcting the metadata of scholarly documents? How can we utilize this information? We will develop an algorithm or a methodology to extract metadata from the HTML Web pages of parent URLs and then a algorithm to judge whether the newly extracted metadata is better than the original one. And finally, we used human intelligence to judge the judgment made by the judgment algorithms to get the performance of our algorithms.
+\end{abstract}
+
+\maketitle
+
+\section{Literature Review}
+The idea of this research project is to develop a new approach for metadata correction and the core is how to develop a effective algorithm of methodology to extract metadata information from parent URLs. Therefore, the most important and related domains will be metadata correction and information extraction. However, there are other domains will be covered as well. Knowledge and skills of Web crawling systems are needed for getting the parent URLs and Web pages of parent URLs. In order to evaluate the huge amount of results, crowdsourcing might be helpful as well. We will discuss the literature of these domains in the following sections. 
+
+\subsection{Web Crawling}
+Web crawling means to traverse the Internet to collect data by program automatically and the programs that crawl the Internet are called Web crawlers. A crawler starts its traversal from a set of URLs, called seed URLs. It maintains a queue of URLs which initially contains the seed URLs. It retrieves Web pages (or any other types of files) of the URLs in the queue, extracts URLs in the Web pages it just retrieved and put the extracted URLs into the queue for next iteration. The retrieved Web pages or files may be stored locally according to the rules specified by the program or the user. A search engine or a digital library like CiteSeerX heavily depends on crawlers to retrieve and update their collections. Furthermore, many services or projects rely on crawlers to retrieve data in order to perform further analysis. Therefore, there are plenty of crawlers being developed, either proprietary or open-sourced.
+
+In order to acquire the parent URLs we need for this project, it is necessary to make sure whether CiteSeerX does have the information of parent URLs in its databases or repositories. CiteSeerX is a digital library whose most part of collection is harvest from the Internet by its crawler. Therefore, if CiteSeerX has the information of parent URLs, the origin of this information comes from the crawler.
+
+CiteSeerX has used two different crawlers. One is a Python crawler written by Shuyi Zheng (SYZ crawler) and the other is Heritrix which is currently the main crawler of CiteSeerX \cite{Wu2012}. Since Heritrix is the main crawler, we will not discuss the SYZ crawler in this project.
+
+Heritrix is an open-source Web crawler developed by the Internet Archive and Nordic Web Archive \cite{Mohr2004}. Depending on the configurations, Heritrix can store the crawled data in directory hierarchies based on the URLs, the traditionally de-facto standard ARC format \cite{Burner1996}, or WARC (Web ARChive) format \cite{ISO2009}, which is published by the Internet Organization for Standardization (ISO) in 2009 to replace the ARC format. According to \cite{Wu2012}, the Crawl Document Importer (CDI) written by Jian is capable to process WARC format and it can extract the resource URL, parent URL, the time it was crawled, the file format and the crawl depth. It seems that the parent URLs might be available for use.
+
+In addition to getting the information of parent URLs, retrieving the Web pages of parent URLs also needs a crawler. There are many open-source crawlers available in addition to Heritrix. For example, Apache Nutch is one of the open-source crawler  which is highly scalable and can be integrated with an index engine, Apache Lucene \cite{Khare2004}. Scrapy (www.scrapy.org) is a open source framework in Python for implementing custom crawlers. However, these projects are too complex for our project. Writing a small Python program that uses GNU wget \cite{Niksic1996} maybe enough.
+
+\subsection{Information Extraction}
+Information extraction (IE) is the problem of identifying text fragments to answer some questions. There are several publicly available infromation extraction tools trageting to scholarly documents. SVMHeaderParse is a metadata extraction tool based on support vector machine (SVM) and is part of the SeerSuite package \cite{Han2003}.  Docear's PDF Inspector is another open source metadata extraction tool based on stylistic analysis. Grobid \cite{Lopez2009} an ParsCit \cite{Councill2008} are also open source tools and perform header and citation extraction based on conditional random fields (CRF). Mendeley Desktop is a reference manager commercial software which performs metadata extraction using SVM. PDFMeat \cite{Aumuller2011} extracts text by pdftotext and then queries Google Scholar to retrieve the metadata. SciPlore Xtract \cite{Beel2010} extracts header information based on stylistic analysis of XML. Linpinski et al. made a survey of and evaluation on the software packages mentioned above \cite{Lipinski2013}. In addition to these software packages, CiteSeerX team hosts a stand-alone service call CiteSeerExtractor which provides a REST-ful API for users to extract data from scholarly documents \cite{Williams2014}.
+
+The information extraction tools and service described above focus on scholarly documents, especially PDF files. However, this project plans to use the information inside parent URLs which are HTML Web pages. Therefore, the methodologies or tools that are able to process HTML files are needed instead. Chang et al. presented a survey of Web information extraction systems. The systems are categorized into four classes: manually-constructed IE systems, supervised IE systems, semi-supervised IE systems, unsupervised IE systems. The user (programmer) of manually-constructed IE systems writes explicit extraction rules. The examples of manually-constructed IE systems are TSIMMIS, Minerva, WebOQL, W4F and XWrap. Supervised IE systems take a set of labeled Web pages and generate the extraction rules by machine learning algorithms. Examples of supervised IE systems include SRV, RAPIER, WIEN, WHISK, NoDoSE, SoftMealy, STALKER and DEByE. Semi-supervised IE systems are similar to supervised IE systems except that they accept incomplete or imprecise examples for extraction rules generation. Examples of semi-supervised IE systems include IEPAD, OLERA, and Thresher. Unsupervised IE systems generates extraction rules automatically with no labeled training data needed. Examples of unsupervised IE systems are DeLa, RoadRunner, EXALG, and DEPTA. \cite{Chang2006}
+
+Another possible approach is to remove all the HTML tags to produce plain text from which Natural Language Processing (NLP) technologies are used to extract information. There are many software packages available to extract plain text from HTML files, such as html2text which is written by Martin Bayer and a package in Debian distribution. After HTML files being converted to plain text, NLP libraries such as NLTK can be used to extract the information we need. NLTK, the Natural Language Toolkit is a suite of Python modules designed for NLP \cite{Loper2002}.
+
+Besides using NLTK to process plain text extracted from HTML files, it is possible to use pattern matching techniques such as regular expression. In fact, CiteSeerX also uses regular expression in citation extraction \cite{Wu2014b}. However, considering HTML files, pattern matching algorithms which are aware of Document Object Model (DOM) are more efficient than simple string matching \cite{Kim2007}. DOM based algorithms like \cite{Gupta2003} are therefore worth trying.
+
+\subsection{Metadata Correction}
+
+There are several approaches to improve the quality of metadata of CiteSeerX in addition to improve the information extraction methods. First is to provide users the power to correct the metadata. Crawler-based digital libraries such as Google Scholar, Microsoft Academic Search and CiteSeerX, all allow users to edit the metadata of their collections in certain extent. \cite{Wu2014a}
+
+Another approach is to adopt the metadata of submission-based digital libraries, such as PubMed, IEEE or DBLP. According to \cite{OrorbiaII}, the metadata of DBLP has been integrated with CiteSeerX citation data by Caragea et al. This approach is very effective because the data quality of these submission-based digital libraries is trust worthy. However, the sizes of collections of these digital libraries are smaller than crawler-based libraries like CiteSeerX in general. Therefore, this approach covers limited portion of CiteSeerX's collection.
+
+The third approach is to use he data of commercial search engines, such as Google and Bing, to correct the metadata, especially the paper titles, of CiteSeerX. The idea is to submit requests through APIs provided by these commercial search engines and parse the result pages. However, the access to these APIs are usually limited. The selection of papers for the requests should be made carefully in order to query only the papers with flaw metadata if possible. \cite{OrorbiaII}
+
+\subsection{Crowdsourcing}
+
+In the last stage of this research, the correctness of the extraction algorithms should be judged by human. It will be convenient to have a interface listing the newly extracted metadata and the original metadata for easily comparison by human judges. Therefore, we will probably develop a web application for this purpose. Furthermore, since the amount of data need to be judged will be about a thousand papers in order to be convincing, it will be better if we can seek for others help. In addition, by integrating the judgment of different people, we can decrease the probability of mistakenly made judgments.
+
+The idea of distributing tedious jobs to individuals in a large group of people or collect the knowledge or products of a large group of people is crowdsourcing. Jeff Howe, the editor of Wired Magazine, coined this term crowdsourcing and gave several examples of the rise of crowdsourcing including in Wired Magazine June 2006. iStockphoto is an image exchange service which allows amateur photographers to share their photos. Web Junk 20, a TV show, collects the popular home-made videos on the Internet to form the content in a cheap and effective way. InnoCentive, a service that connect the pharmaceutical makers the the brainpower of hobbyist chemists, helps the speedup of drug development. Amazon Mechanical Turk (AMT) is a platform that individuals or companies can find people to perform tasks that are difficult for computers. That is, a marketplace for human intelligence. \cite{Howe2006}.
+
+There are some researchers start to utilize Amazon Mechanical Turk to perform their experiments. AMT provides a service to cope the problem that was difficult for individual researchers or even organizations. Hundreds of people can be recruited for the small tasks of an experiment within short timeframe. AMT is suitable for rapid interactive tasks. However, the researchers should pay special care in the design of small tasks, especially experiments that involve subjective and qualitative opinions. In addition, AMT does not provide support for participant assignment. It is therefore hard to perform certain types of experiment designs. \cite{Kittur2008}
+
+% Bibliography
+\bibliographystyle{ACM-Reference-Format-Journals}
+\bibliography{mycollection}
+
+\end{document}
+% End of v2-acmsmall-sample.tex (March 2012) - Gerry Murray, ACM
