@@ -36,13 +36,17 @@ Po-Yu Chuang
 \affil{College of Information Sciences and Technology, Penn State University}
 }
 
-\begin{abstract}
-Crawler-based digital libraries such as CiteSeerX harvest documents from the Internet and extract metadata, for instance, subject, authors an year., from the documents automatically by elaborately designed algorithms. However, it is inevitable that the metadata extracted by algorithms contain errors. There are several techniques being developed to deal with this problem. One is using the known correct metadata to proofread the metadata in CiteSeerX. The known correct metadata come from the submission based digital libraries such as PubMed, arXive, IEEE Xplore, ACM Digital Library, DBLP... etc. The other approach is using the commercial search engines, such as Google Scholar and Microsoft Academic Search, as sources because their extraction algorithms may be more delicate and precise and the quality of their metadata is often better. The third approach is introducing the human intelligence to cover the weakness of extraction software. Google Scholar, Microsoft Academic Search and CiteSeerX all give their users the power to correct metadata in certain extent.
-
-In addition to the techniques mentioned above, there is one possible source of metadata that has never been utilized by CiteSeerX -- parent URLs. The parent URL of a document is the URL, or more specifically a HTML Web page, that contains the link to the document. Intuitively, the Web pages of parent URLs may contain metadata of the document. Our research questions come from here:  Is parent URL a good source of information for correcting the metadata of scholarly documents? How can we utilize this information? We will develop an algorithm or a methodology to extract metadata from the HTML Web pages of parent URLs and then a algorithm to judge whether the newly extracted metadata is better than the original one. And finally, we used human intelligence to judge the judgment made by the judgment algorithms to get the performance of our algorithms.
-\end{abstract}
-
 \maketitle
+
+\section{Preface}
+
+\subsection{Research Questions}
+
+How can we utilize the information of parent URLs to improve data quality of CiteSeerX?
+
+\subsection{Literature Search Strategies}
+
+I started from the papers published by the member of CiteSeerX team that discuss the related topics my search concerns including web crawling, information extraction, metadata correction and crowdsourcing. Then I follow the reference of the papers I have read to search more papers. Most of the searches were done on Google Scholar.
 
 \section{Literature Review}
 The idea of this research project is to develop a new approach for metadata correction and the core is how to develop a effective algorithm of methodology to extract metadata information from parent URLs. Therefore, the most important and related domains will be metadata correction and information extraction. However, there are other domains will be covered as well. Knowledge and skills of Web crawling systems are needed for getting the parent URLs and Web pages of parent URLs. In order to evaluate the huge amount of results, crowdsourcing might be helpful as well. We will discuss the literature of these domains in the following sections. 
@@ -59,6 +63,7 @@ Heritrix is an open-source Web crawler developed by the Internet Archive and Nor
 In addition to getting the information of parent URLs, retrieving the Web pages of parent URLs also needs a crawler. There are many open-source crawlers available in addition to Heritrix. For example, Apache Nutch is one of the open-source crawler  which is highly scalable and can be integrated with an index engine, Apache Lucene \cite{Khare2004}. Scrapy (www.scrapy.org) is a open source framework in Python for implementing custom crawlers. However, these projects are too complex for our project. Writing a small Python program that uses GNU wget \cite{Niksic1996} maybe enough.
 
 \subsection{Information Extraction}
+
 Information extraction (IE) is the problem of identifying text fragments to answer some questions. There are several publicly available infromation extraction tools trageting to scholarly documents. SVMHeaderParse is a metadata extraction tool based on support vector machine (SVM) and is part of the SeerSuite package \cite{Han2003}.  Docear's PDF Inspector is another open source metadata extraction tool based on stylistic analysis. Grobid \cite{Lopez2009} an ParsCit \cite{Councill2008} are also open source tools and perform header and citation extraction based on conditional random fields (CRF). Mendeley Desktop is a reference manager commercial software which performs metadata extraction using SVM. PDFMeat \cite{Aumuller2011} extracts text by pdftotext and then queries Google Scholar to retrieve the metadata. SciPlore Xtract \cite{Beel2010} extracts header information based on stylistic analysis of XML. Linpinski et al. made a survey of and evaluation on the software packages mentioned above \cite{Lipinski2013}. In addition to these software packages, CiteSeerX team hosts a stand-alone service call CiteSeerExtractor which provides a REST-ful API for users to extract data from scholarly documents \cite{Williams2014}.
 
 The information extraction tools and service described above focus on scholarly documents, especially PDF files. However, this project plans to use the information inside parent URLs which are HTML Web pages. Therefore, the methodologies or tools that are able to process HTML files are needed instead. Chang et al. presented a survey of Web information extraction systems. The systems are categorized into four classes: manually-constructed IE systems, supervised IE systems, semi-supervised IE systems, unsupervised IE systems. The user (programmer) of manually-constructed IE systems writes explicit extraction rules. The examples of manually-constructed IE systems are TSIMMIS, Minerva, WebOQL, W4F and XWrap. Supervised IE systems take a set of labeled Web pages and generate the extraction rules by machine learning algorithms. Examples of supervised IE systems include SRV, RAPIER, WIEN, WHISK, NoDoSE, SoftMealy, STALKER and DEByE. Semi-supervised IE systems are similar to supervised IE systems except that they accept incomplete or imprecise examples for extraction rules generation. Examples of semi-supervised IE systems include IEPAD, OLERA, and Thresher. Unsupervised IE systems generates extraction rules automatically with no labeled training data needed. Examples of unsupervised IE systems are DeLa, RoadRunner, EXALG, and DEPTA. \cite{Chang2006}
@@ -66,6 +71,25 @@ The information extraction tools and service described above focus on scholarly 
 Another possible approach is to remove all the HTML tags to produce plain text from which Natural Language Processing (NLP) technologies are used to extract information. There are many software packages available to extract plain text from HTML files, such as html2text which is written by Martin Bayer and a package in Debian distribution. After HTML files being converted to plain text, NLP libraries such as NLTK can be used to extract the information we need. NLTK, the Natural Language Toolkit is a suite of Python modules designed for NLP \cite{Loper2002}.
 
 Besides using NLTK to process plain text extracted from HTML files, it is possible to use pattern matching techniques such as regular expression. In fact, CiteSeerX also uses regular expression in citation extraction \cite{Wu2014b}. However, considering HTML files, pattern matching algorithms which are aware of Document Object Model (DOM) are more efficient than simple string matching \cite{Kim2007}. DOM based algorithms like \cite{Gupta2003} are therefore worth trying.
+
+
+\subsection{Citation Extraction}
+
+
+
+rule-based approach
+Ding et al. extract citation information by template mining which is a set of rules \cite{Ding1999}.
+
+
+machine learning approach (citeseer, HMM, CRF)
+Seymore et al apply Hidden Markov Model (HMM) in information extraction and extract metadata from the header of scholarly papers in experiments \cite{Seymore1999}.
+
+Hetzner designs a HMM and runs the experiment of citation extraction against Coa dataset\cite{Hetzner2008}.
+
+Powley et al. develop an integrated approach of reference segmentation, citation extraction and citation-reference matching based on heuristics that are inspired by observation \cite{Powley2007}. However, the term citation in this paper is different from usual meaning and refers only to a mention of another paper in the text body. Therefore, their algorithm cannot be applied to our problem.
+
+
+Day et al. adopt INFOMAP which is an ontological knowledge representation framework to extract citation information\cite{Day2005} \cite{Day2007}.
 
 \subsection{Metadata Correction}
 
@@ -82,6 +106,10 @@ In the last stage of this research, the correctness of the extraction algorithms
 The idea of distributing tedious jobs to individuals in a large group of people or collect the knowledge or products of a large group of people is crowdsourcing. Jeff Howe, the editor of Wired Magazine, coined this term crowdsourcing and gave several examples of the rise of crowdsourcing including in Wired Magazine June 2006. iStockphoto is an image exchange service which allows amateur photographers to share their photos. Web Junk 20, a TV show, collects the popular home-made videos on the Internet to form the content in a cheap and effective way. InnoCentive, a service that connect the pharmaceutical makers the the brainpower of hobbyist chemists, helps the speedup of drug development. Amazon Mechanical Turk (AMT) is a platform that individuals or companies can find people to perform tasks that are difficult for computers. That is, a marketplace for human intelligence. \cite{Howe2006}.
 
 There are some researchers start to utilize Amazon Mechanical Turk to perform their experiments. AMT provides a service to cope the problem that was difficult for individual researchers or even organizations. Hundreds of people can be recruited for the small tasks of an experiment within short timeframe. AMT is suitable for rapid interactive tasks. However, the researchers should pay special care in the design of small tasks, especially experiments that involve subjective and qualitative opinions. In addition, AMT does not provide support for participant assignment. It is therefore hard to perform certain types of experiment designs. \cite{Kittur2008}
+
+\section{Summarize}
+
+
 
 % Bibliography
 \bibliographystyle{ACM-Reference-Format-Journals}
