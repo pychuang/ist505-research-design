@@ -1,0 +1,210 @@
+ % v2-acmsmall-sample.tex, dated March 6 2012
+% This is a sample file for ACM small trim journals
+%
+% Compilation using 'acmsmall.cls' - version 1.3 (March 2012), Aptara Inc.
+% (c) 2010 Association for Computing Machinery (ACM)
+%
+% Questions/Suggestions/Feedback should be addressed to => "acmtexsupport@aptaracorp.com".
+% Users can also go through the FAQs available on the journal's submission webpage.
+%
+% Steps to compile: latex, bibtex, latex latex
+%
+% For tracking purposes => this is v1.3 - March 2012
+
+\documentclass[prodmode]{acmsmall} % Aptara syntax
+
+% Package to generate and customize Algorithm as per ACM style
+\usepackage[ruled]{algorithm2e}
+\renewcommand{\algorithmcfname}{ALGORITHM}
+\SetAlFnt{\small}
+\SetAlCapFnt{\small}
+\SetAlCapNameFnt{\small}
+\SetAlCapHSkip{0pt}
+\IncMargin{-\parindent}
+
+
+% Document starts
+\begin{document}
+
+% Page heads
+\markboth{Po-Yu Chuang et al.}{Metadata Correction of CiteSeerX: Utilizing the Information inside Parent URLs}
+
+% Title portion
+\title{Metadata Correction of CiteSeerX: Utilizing the Information inside Parent URLs}
+\author{
+Po-Yu Chuang
+\affil{College of Information Sciences and Technology, Penn State University}
+}
+
+\begin{abstract}
+Crawler-based digital libraries such as CiteSeerX harvest documents from the Internet and extract metadata, for instance, subject, authors an year., from the documents automatically by elaborately designed algorithms. However, it is inevitable that the metadata extracted by algorithms contain errors. There are several techniques being developed to deal with this problem. One is using the known correct metadata to proofread the metadata in CiteSeerX. The known correct metadata come from the submission based digital libraries such as PubMed, arXive, IEEE Xplore, ACM Digital Library, DBLP... etc. The other approach is using the commercial search engines, such as Google Scholar and Microsoft Academic Search, as sources because their extraction algorithms may be more delicate and precise and the quality of their metadata is often better. The third approach is introducing the human intelligence to cover the weakness of extraction software. Google Scholar, Microsoft Academic Search and CiteSeerX all give their users the power to correct metadata in certain extent.
+
+In addition to the techniques mentioned above, there is one possible source of metadata that has never been utilized by CiteSeerX -- parent URLs. The parent URL of a document is the URL, or more specifically a HTML Web page, that contains the link to the document. Intuitively, the Web pages of parent URLs may contain metadata of the document. Our research questions come from here:  Is parent URL a good source of information for correcting the metadata of scholarly documents? How can we utilize this information? We will develop an algorithm or a methodology to extract metadata from the HTML Web pages of parent URLs and then a algorithm to judge whether the newly extracted metadata is better than the original one. And finally, we used human intelligence to judge the judgment made by the judgment algorithms to get the performance of our algorithms.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+Academic researchers nowadays cannot live without digital libraries although traditional libraries may still exist for a while. Several decades ago, the knowledge was conveyed by all kinds of publications. Researchers acquire the information of latest progresses of science from the physically published books, journals and conference proceedings. However, it is unrealistic for a single researcher to have all these physical publications he or she needs. It is where libraries come to play an important role to deal with this problem. Libraries store these materials as much as they can so that their target users, e.g. researchers, are able to dig into them in the future and therefore are invaluable resources to researchers.
+
+Since the size of collections in libraries tend to be large in nature, accessing data in a library easily is an important concern. There is a discipline, bibliography, in organizing and managing the books in libraries in systematic ways. Even with the support of these systematic skills, finding data in a library takes time and might not be convenient for certain situations. For example, sometimes, a researcher have to visit several libraries in order to collect all the data he or she need and this is still the case in several disciplines nowadays.
+
+Everything changed after the invention of computer. A large portion of new publications have provided digitized versions in addition to physical copies. Some publications even have digital form only. In addition to new publications , old publications in collections are continuously digitized by publishers, libraries and ambitious projects like Google Book Libraries. It is a natural trend since there are many advantages for digitized publications. First, they are easier, cheaper and faster to distribute. Thanks for the invention of the Internet, people can get a document from the other end of the world in a few minutes. Second, the introduction of the technologies that support users to search the digitized data such as databases and index engines enables rapid lookup in the digitized collections. These technologies together form the essential foundations of digital libraries which provides a means even more convenient than traditional libraries. The benefit of digital libraries is not just improving the accessibility and searchability, it also eliminate the gap between urban and rural areas and the gap between rich and poor, and also helps to accelerate the distribution of knowledge and even the progress of science.
+
+There are two types of digital libraries in terms of how they build the collections. The first type of digital libraries collect data manually. The documents are added by the personnels or the users of the digital libraries. No matter the processes of data input are totally manual or with a certain degree of automation, what will be added into collection relies on human decisions. It is therefore labor intensive and could limit the scale of the collection. On the other hand, the advantage of this type of digital libraries is that with careful data input flow the correctness and accuracy of data may be better. The examples of this type of digital libraries are PubMed, arXive, IEEE Xplore, ACM Digital Library, DBLP… etc. The other type of digital libraries collects data automatically and actively by crawlers, which are software programs that traverse the Internet and download the content they found on the Web according to predefined rules. The examples of this type of digital libraries include Google Scholar, Microsoft Academic Search and CiteSeerX. This type of digital libraries could achieve a much larger size of collection that is impossible in the first type of digital libraries. Since the crawling process is automatic, many documents that were neglected by human could be discovered. However, there are also disadvantages in this type of digital libraries. First of all, if the document is not on the Internet, there is no way that the crawlers can retrieve it. Second, the information of the documents collected by crawlers is extracted by program automatically as well. Due to the unstructured and inconsistent nature of the Web, it is inevitable that there are some errors in the extracted information.
+
+\section{Research Problem and Rationale}
+
+Take CiteSeerX as an example. CiteSeerX is a digital library as well as a search engine that focus on scholarly documents, such as conference papers, journal papers, books, posters, and slides. The crawler of CiteSeerX traverses the Internet from several sets of seed URLs and collects only specific types of files such as PDF. Because CiteSeerX cares about scholarly documents only, the PDF documents are examined by software programs in its extraction mechanism. CiteSeerX implements many heuristics in its extraction mechanism which base on the domain knowledge of scholarly documents in order to judge whether a document is a scholarly document. For instance, the appearance of several specific terms, e.g. “abstract”, “introduction”, “conclusions”, “references”... etc, is a good indicator for scholarly documents. If a PDF file do not seem to be a scholarly document, it will be discarded.
+
+The next step is to extract the information from PDF files. There are several information that CiteSeerX needs in scholarly documents. The most important information includes title, authors, abstract, year, venue… etc. This information is called metadata of scholarly documents. The extraction mechanism of CiteSeerX tries to get the metadata by adopting several software packages based on statistical models and machine learning technologies, such as ParsCit \cite{councill2008parscit} which extracts the citations of a paper and SVMHeaderParse \cite{han2003automatic} which extracts header of a paper \cite{wu2014citeseerx}.
+
+The extracted information, or metadata, of scholarly documents is very important to a digital library or search engine because it is what users care and need when they try to search documents related to a specific topic, in a specific time period or with a specific author. Also, metadata of scholarly documents is an important factor in judging the relevance of a user query and documents. For example, a word appears in the title of a paper may be more important than a word in one of the paragraphs. Search engine can adjust weightings of fields of metadata to provide better (more relevant) results to a user query.
+
+To improve the quality of metadata, one approach is to improve the mechanism of the extraction process. However, even with the state-of-art information extraction technologies, it is very possible that the metadata cannot be extracted correctly. Although most scholarly documents follow some common format in presenting the metadata, there are no strict rules or standards of how the metadata should be structured and there are too many variations. It is hard to guarantee the correctness of extracted metadata.
+
+Human intervention is therefore an effective approach in this situation. For example, Google Scholar allows users to edit metadata of their own papers. Microsoft Academic Search and CiteSeerX are less restrictive in allowing user’s correction. The users of these two digital libraries can edit the metadata of any papers as long as they are logged in. These user inputs have been proven effective and valuable for these digital libraries \cite{wu2014impact}.
+
+The first approach use the information inside the documents themselves. The second approach use the information provided by human users. Besides the two information sources, there is another information source that might include the metadata of documents and has never been used in CiteSeerX -- the parent URLs of documents.
+
+Before we continue the describe the idea, let us explain the meaning of parent URL. As we mentioned previously, CiteSeerX collects scholarly documents -- mostly PDF files -- from the Internet by its crawler. A PDF document itself is a URL and the reason why the crawler can find this URL is because usually there is a parent URL or a Web page that contains a link to the document URL. Intuitively, the parent URL might contain information about the document such as title, authors, abstract, year, venue… etc, which are the metadata that extraction mechanism tries to get. The current extraction mechanism in CiteSeerX extract metadata of a PDF document solely from the content of the document without utilizing the knowledge of parent URLs. Therefore, it is possible to use this information to improve the quality of metadata of documents in CiteSeerX database.
+
+\section{Literature Review}
+
+The idea of this research project is to develop a new approach for metadata correction and the core is how to develop a effective algorithm of methodology to extract metadata information from parent URLs. Therefore, the most important and related domains will be metadata correction and information extraction. However, there are other domains will be covered as well. Knowledge and skills of Web crawling systems are needed for getting the parent URLs and Web pages of parent URLs. In order to evaluate the huge amount of results, crowdsourcing might be helpful as well. We will discuss the literature of these domains in the following sections. 
+
+\subsection{Web Crawling}
+
+Web crawling means to traverse the Internet to collect data by program automatically and the programs that crawl the Internet are called Web crawlers. A crawler starts its traversal from a set of URLs, called seed URLs. It maintains a queue of URLs which initially contains the seed URLs. It retrieves Web pages (or any other types of files) of the URLs in the queue, extracts URLs in the Web pages it just retrieved and put the extracted URLs into the queue for next iteration. The retrieved Web pages or files may be stored locally according to the rules specified by the program or the user. A search engine or a digital library like CiteSeerX heavily depends on crawlers to retrieve and update their collections. Furthermore, many services or projects rely on crawlers to retrieve data in order to perform further analysis. Therefore, there are plenty of crawlers being developed, either proprietary or open-sourced.
+
+In order to acquire the parent URLs we need for this project, it is necessary to make sure whether CiteSeerX does have the information of parent URLs in its databases or repositories. CiteSeerX is a digital library whose most part of collection is harvest from the Internet by its crawler. Therefore, if CiteSeerX has the information of parent URLs, the origin of this information comes from the crawler.
+
+CiteSeerX has used two different crawlers. One is a Python crawler written by Shuyi Zheng (SYZ crawler) and the other is Heritrix which is currently the main crawler of CiteSeerX \cite{wu2012web}. Since Heritrix is the main crawler, we will not discuss the SYZ crawler in this project.
+
+Heritrix is an open-source Web crawler developed by the Internet Archive and Nordic Web Archive \cite{mohr2004introduction}. Depending on the configurations, Heritrix can store the crawled data in directory hierarchies based on the URLs, the traditionally de-facto standard ARC format \cite{burner1996archive}, or WARC (Web ARChive) format \cite{iso200928500}, which is published by the Internet Organization for Standardization (ISO) in 2009 to replace the ARC format. According to \cite{wu2012web}, the Crawl Document Importer (CDI) written by Jian is capable to process WARC format and it can extract the resource URL, parent URL, the time it was crawled, the file format and the crawl depth. It seems that the parent URLs might be available for use.
+
+In addition to getting the information of parent URLs, retrieving the Web pages of parent URLs also needs a crawler. There are many open-source crawlers available in addition to Heritrix. For example, Apache Nutch is one of the open-source crawler  which is highly scalable and can be integrated with an index engine, Apache Lucene \cite{khare2004nutch}. Scrapy (www.scrapy.org) is a open source framework in Python for implementing custom crawlers. However, these projects are too complex for our project. Writing a small Python program that uses GNU wget \cite{niksic1998gnu} maybe enough.
+
+\subsection{Information Extraction}
+
+Information extraction (IE) is the problem of identifying text fragments to answer some questions. In this research topic, the text fragments we are interested in is the citation metadata in HTML Web pages. The problem can be further divided into two aspects -- extracting citation metadata and extracting data from HTML Web pages.
+
+For citation metadata extraction, there are two major approaches. First, rule-based approach adopts heuristic rules for pattern matching. Lawson et al have extracted citation information from chemical patents using template mining \cite{lawson1996automatic}. Ding et al. have used template mining to extract citation metadata as well \cite{ding1999template}. Powley et al. develop an integrated approach of reference segmentation, citation extraction and citation-reference matching based on heuristics that are inspired by observation \cite{powley2007evidence}. However, the term citation in this paper is different from usual meaning and refers only to a mention of another paper in the text body. Therefore, their algorithm cannot be applied to our problem.
+
+Second, machine learning approach uses probabilistic models such as  Hidden Markov Model (HMM)  and Conditional Random Fields (CRF) or other machine learning models like Support Vector Machine (SVM) to classify different fields in citation strings. Seymore et al have used Hidden Markov Model (HMM) in information extraction and extracted metadata from the header of scholarly papers in experiments \cite{seymore1999learning}. Hetzner designs an HMM and runs experiments of citation extraction against Cora dataset \cite{hetzner2008simple}. CiteSeerX uses SVMHeaderParse for metadata extraction which is based on SVM and is part of the SeerSuite package \cite{han2003automatic}.
+
+There is a third approach proposed by Day et al. who adopt an ontological knowledge representation framework, INFOMAP to extract citation information \cite{day2005knowledge} \cite{day2007reference}.
+
+There are several publicly available information extraction tools targeting to scholarly documents. As we mentioned, SVMHeaderParse in SeerSuite package is a metadata extraction tool based on SVM  \cite{han2003automatic}.  Docear's PDF Inspector is another open source metadata extraction tool based on stylist ic analysis. Grobid \cite{lopez2009grobid} an ParsCit \cite{councill2008parscit} are also open source tools and perform header and citation extraction based on conditional random fields (CRF). Mendeley Desktop is a reference manager commercial software which performs metadata extraction using SVM. PDFMeat \cite{aumuller2011pdfmeat} extracts text by pdftotext and then queries Google Scholar to retrieve the metadata. SciPlore Xtract \cite{beel2010sciplore} extracts header information based on stylistic analysis of XML. Linpinski et al. made a survey of and evaluation on the software packages mentioned above \cite{lipinski2013evaluation}. In addition to these software packages, CiteSeerX team hosts a stand-alone service call CiteSeerExtractor which provides a RESTful API for users to extract data from scholarly documents \cite{williams2014scholarly}.
+
+The information extraction tools and service described above focus on scholarly documents, especially PDF files. However, this project plans to use the information inside parent URLs which are HTML Web pages. Therefore, the methodologies or tools that are able to process HTML documents are needed instead.
+
+One possible approach to extract information from HTML documents is to remove all the HTML tags and produce plain text from which Natural Language Processing (NLP) technologies can be used to extract information. There are many software packages available to extract plain text from HTML files, such as html2text which is written by Martin Bayer and a package in Debian distribution. After HTML files being converted to plain text, NLP libraries such as NLTK can be used to extract the information we need. NLTK, the Natural Language Toolkit is a suite of Python modules designed for NLP \cite{loper2002nltk} \cite{bird2006nltk}. Besides using NLTK, one can also use pattern matching techniques such as regular expression to extract information from plain text. In fact, CiteSeerX uses regular expression in part of its citation extraction process \cite{wu2014citeseerx}.
+
+However, considering HTML documents, pattern matching algorithms which are aware of Document Object Model (DOM) are more efficient than simple string matching \cite{kim2007web}. The method proposed by Buttler et al. extracts DOM objects of interest by several heuristics based on tag frequencies \cite{buttler2001fully}. Hemnani et al. use tree alignment algorithm to generate extraction rules for extracting information from HTML documents \cite{hemnani2002information}. Gupta et al. used simple rules on DOM to extract main content of HTML web pages. Kim et al. propose a  HTML tree matching algorithm which assigns different weights to different tree nodes \cite{kim2007web}.
+
+Chang et al. \cite{chang2006survey} presented a survey of Web information extraction systems. The systems are categorized into four classes: manually-constructed IE systems, supervised IE systems, semi-supervised IE systems, unsupervised IE systems. The user (programmer) of manually-constructed IE systems writes explicit extraction rules. The examples of manually-constructed IE systems are TSIMMIS, Minerva, WebOQL, W4F and XWrap. Supervised IE systems take a set of labeled Web pages and generate the extraction rules by machine learning algorithms. Examples of supervised IE systems include SRV, RAPIER, WIEN, WHISK, NoDoSE, SoftMealy, STALKER and DEByE. Semi-supervised IE systems are similar to supervised IE systems except that they accept incomplete or imprecise examples for extraction rules generation. Examples of semi-supervised IE systems include IEPAD, OLERA, and Thresher. Unsupervised IE systems generates extraction rules automatically with no labeled training data needed. Examples of unsupervised IE systems are DeLa, RoadRunner, EXALG, and DEPTA.
+
+\subsection{Metadata Correction}
+
+There are several approaches to improve the quality of metadata of CiteSeerX in addition to improve the information extraction methods. First is to provide users the power to correct the metadata. Crawler-based digital libraries such as Google Scholar, Microsoft Academic Search and CiteSeerX, all allow users to edit the metadata of their collections in certain extent. \cite{wu2014impact}
+
+Another approach is to adopt the metadata of submission-based digital libraries, such as PubMed, IEEE or DBLP. According to \cite{ororbiaciteseerx}, the metadata of DBLP has been integrated with CiteSeerX citation data by Caragea et al. This approach is very effective because the data quality of these submission-based digital libraries is trust worthy. However, the sizes of collections of these digital libraries are smaller than crawler-based libraries like CiteSeerX in general. Therefore, this approach covers limited portion of CiteSeerX's collection.
+
+The third approach is to use he data of commercial search engines, such as Google and Bing, to correct the metadata, especially the paper titles, of CiteSeerX. The idea is to submit requests through APIs provided by these commercial search engines and parse the result pages. However, the access to these APIs are usually limited. The selection of papers for the requests should be made carefully in order to query only the papers with flaw metadata if possible. \cite{ororbiaciteseerx}
+
+\subsection{Crowdsourcing}
+
+In the last stage of this research, the correctness of the extraction algorithms should be judged by human. It will be convenient to have a interface listing the newly extracted metadata and the original metadata for easily comparison by human judges. Therefore, we will probably develop a web application for this purpose. Furthermore, since the amount of data need to be judged will be about a thousand papers in order to be convincing, it will be better if we can seek for others help. In addition, by integrating the judgment of different people, we can decrease the probability of mistakenly made judgments.
+
+The idea of distributing tedious jobs to individuals in a large group of people or collect the knowledge or products of a large group of people is crowdsourcing. Jeff Howe, the editor of Wired Magazine, coined this term crowdsourcing and gave several examples of the rise of crowdsourcing including in Wired Magazine June 2006. iStockphoto is an image exchange service which allows amateur photographers to share their photos. Web Junk 20, a TV show, collects the popular home-made videos on the Internet to form the content in a cheap and effective way. InnoCentive, a service that connect the pharmaceutical makers the the brainpower of hobbyist chemists, helps the speedup of drug development. Amazon Mechanical Turk (AMT) is a platform that individuals or companies can find people to perform tasks that are difficult for computers. That is, a marketplace for human intelligence. \cite{howe2006rise}.
+
+There are some researchers start to utilize Amazon Mechanical Turk to perform their experiments. AMT provides a service to cope the problem that was difficult for individual researchers or even organizations. Hundreds of people can be recruited for the small tasks of an experiment within short timeframe. AMT is suitable for rapid interactive tasks. However, the researchers should pay special care in the design of small tasks, especially experiments that involve subjective and qualitative opinions. In addition, AMT does not provide support for participant assignment. It is therefore hard to perform certain types of experiment designs. \cite{kittur2008crowdsourcing}
+
+\section{Methods}
+
+Our goal is to improve the quality of the metadata of documents in CiteSeerX by utilizing the information in the parent URLs of documents. The core is to design and develop an algorithm or a software package that extract metadata of scholarly documents from the Web pages of their parent URLs.
+
+This is a design-based research project and the software being developed will be benchmarked in a quantitative way. Therefore, the method that will be used is laboratory experiment.
+
+\subsection{Research Design}
+
+The objective includes (1) developing a algorithm that analyzes the context of the Web pages of parent URLs and extracts information of scholarly documents, e.g. title, authors, year, conference, …etc, (2) having a methodology to evaluate the result of our extraction algorithm whether the quality of the metadata it extracted indeed is better or correct.
+
+The deliverable of the project includes (1) a program to download HTML Web pages of parent URLs of papers, (2) a program to extract metadata of papers from the HTML Web pages, (3) a Web application for human judges to judge whether the newly extracted metadata are indeed better than the original metadata in CiteSeerX main database.
+
+The research design is quantitative. The results of the project will be statistics generated during the experiment including (1) the percentage of papers with parent URLs, (2) the percentage of parent URL Web pages that contain useful metadata of papers, (3) the correctness of the newly extracted metadata. These statistics can be used to show the benefit of adopting this methodology into CiteSeerX.
+
+\subsection{Data Sources}
+
+Since the objective is to improve the quality of metadata of CiteSeerX. The entire or subset of CiteSeerX corpus will be used. CiteSeerX currently uses Heritrix as its main crawler \cite{wu2012web}, which records the parent URL information in the crawled data in WARC format. The Crawl Document Importer (CDI) middleware parses the WARC files and writes the information of the crawled documents into crawl database \cite{wu2012web}. Therefore, the crawl database should contain the parent URLs. However, this information is not included in CiteSeerX’s main database which stores the up-to-date metadata of papers. In order to obtain the parent URL of a paper and use it to improve the metadata, we need to have accesses to both main and crawl databases of CiteSeerX.
+
+\subsection{Sampling}
+
+This project is trying to provide a mechanism to improve the quality of metadata of papers in CiteSeerX. The scope is therefore all the papers in CiteSeerX. However, since human judgment will be used in this research project and due to the large size of CiteSeerX collection, it is inevitable to limit the size of data being considered and random sampling will be used to select parent URLs from CiteSeerX crawl database. Because the data are in the crawl database, random sampling can be performed through SQL statements. However, due to the sized of data in the database, the SQL statements for random sampling should be designed carefully. Otherwise, there might be performance issues.
+
+\subsection{Data Management techniques}
+
+The parent URLs of papers which are HTML Web pages will be downloaded and stored in the local disk with DOIs (Digital Object Identifier) as their file names. These HTML files will be parsed and the metadata of the target papers will be extracted by program if possible. The extracted metadata will be stored in a database. The extracted metadata will be compared with original up-to-date metadata in CiteSeerX main database. If the newly extracted metadata from parent URL is better than the original one, then it will be stored in another table in database for later evaluation.
+
+The data that have been stored in the local disk or the database will not be removed unless there are some administrative reasons such as running out of disk space. The data in this stage will be available for all team members working on CiteSeerX, but may not to available to the public. However, once the methodology of this search project has been proved good enough and the CiteSeerX team decide to adopt this methodology, the data will be integrated into the production database and therefore be available to the public through CiteSeerX. In addition, the source code of programs that extract the metadata from parent URL and that judge the quality of metadata will be integrated into CiteSeerX code base and therefore be open sourced.
+
+\subsection{Data Analysis Strategies}
+
+We may have several statistics in this project. First, it is not necessary that every paper in CiteSeerX database has a parent URL. Depending on the crawler being used or the configurations of crawler or Crawl Document Importer (CDI), the information of parent URLs might not be available in the crawler’s crawled data. Also, CiteSeerX has a feature for general users to submit PDF and there is no parent URL in this case. The percentage of papers with parent URLs could be a nice indicator to examine CiteSeerX’s crawling infrastructure.
+
+Second, a program will try to extract metadata from HTML Web pages of parent URLs of papers. We can have statistics about how many percentage of parent URL Web pages contain useful metadata of papers. This could give us the insight of the importance of parent URLs.
+
+Third, another program will compare the extracted metadata of papers with the original metadata in CiteSeerX main database and decided whether the newly extracted metadata are better. If they are better according to the algorithm, they will be store into another database. The human judgment will be introduced at this point. A Web application will be provided to list the newly extracted metadata and the original metadata, so that we (or other people who are willing to help) can use it to record whether the results are indeed better. The metadata of papers contain several fields, e.g. subject, authors, venue, year… etc. All the fields will be judged separately. Therefore, we can use statistics of the correctness to evaluate the performance of the algorithm we use for each field.
+
+\subsection{Reliability and Validity}
+
+For reliability, the parent URLs being selected for the experiment and all the source code will be publicly available through github, so that people can reproduce the experiment if they want to verify our research result. For equivalence aspect, the selected parent URLs are fixed; the extraction algorithm should give the same result as long as the HTML Web pages unchanged; the only thing that might be different is the human judgment of whether extracted metadata is better. Since the all the fields of metadata of papers are well defined, it should be obvious to judge whether the newly extracted metadata is better. For consistency aspect, it is possible to observe the consistency by comparing the results of metadata extracted from similar Web pages. For stability, it is possible although unlikely that the Web page of a parent URL changed after the experiment and the metadata extracted from that parent URL might change, but this should a rare case and will not affect the overall scores of correctness.
+
+Since this is a quantitative research, we will consider construct validity and external validity. For construct validity, a measure to quantify the improvement or accuracy of metadata extracted by our method will be adopted. We will first use randomly selected parent URLs as inputs to the extraction algorithm and use crowdsourcing to label the correctness of extracted metadata. The percentage of correctly extracted metadata is the most important measure in this study.
+
+To achieve external validity, the design and implementation of our algorithm or mechanism should be generalizable to applications other than CiteSeerX. The solution is to develop the software as a library which extracts information from HTML Web pages according to the criteria specified by the programmers. However, this is optional in this study because the data quality of CiteSeerX itself is the most important thing. Generalization of our methodology is a secondary issue.
+
+\subsection{Timeline}
+
+\begin{enumerate}
+\item Develop HTML extraction program
+
+Mar 2016 - Apr 2016 (Done)
+
+\item Develop metadata judgement algorithm
+
+May 2016 - Sep 2016
+
+\item Data analysis
+
+Oct 2016 - Dec 2016
+
+\item Paper writing
+
+Jan 2017 - Feb 2017
+\end{enumerate}
+
+\section{Results}
+
+\subsection{Expected Results}
+
+The performance of extraction algorithms can be measurd by precsion and recall which are common measures in information retrieval. Because we adopt citation information parsing algorithms like ParsCit to parse citation strings, the precision and recall of citaiton strings are the numbers of interest. In order to calculate precision and recall, we need to define what is correctly extracted citation information. We consider only a contiguous text that contains at least title, authors and year of a publication as a valid citation string. A correctly extracted citation string must include all citation information but not too much unrelated text.
+
+For the metadata correction, our metadata judgment algorithm compares metadata from two or more data sources and choose the best one for each field. The performance of it is therefore the percentage of correct decisions. We will use the user submitted corrections in CiteSeerX as the ground truth in evalutation.
+
+\subsection{Limitations}
+
+In order to judge whether the newly extracted metadata of papers from parent URLs are better, some algorithm will be needed in the program. The algorithm might base on machine learning, natural language processing or statistics. Since I am still a newbie in these areas, the difficulty of development is uncertain.
+
+The section limitation is that after the citation strings being extracted, we will use an existing citation extraction algorithm like ParsCit. Therefore, the performance of eventual metadata extraction will be bounded by the algorithm we choose.
+
+The third limitation is the data processing time. According to my previous experience with keyphrase extraction in CiteSeerX and the experience in using machine learning libraries in other class, natural language processing and machine learning programs are very CPU intensive and time consuming. For example, it took almost a month to extract the keyphrases from the six millions of documents in CiteSeerX with a computer with 24 CPUs. Of course I can do the experiment on a small subset of the corpus, but the processing time is still an important factor to consider.
+
+% Bibliography
+\bibliographystyle{ACM-Reference-Format-Journals}
+\bibliography{mycollection}
+
+\end{document}
+% End of v2-acmsmall-sample.tex (March 2012) - Gerry Murray, ACM
